@@ -78,26 +78,26 @@ int		ft_read_file(char *name)
 */
 int		get_next_line(int fd, char **line)
 {
-	char	*buf;
+	static char	*buf;
 	static int	ret;
-	int	i;
+	char		*temp;
+	int		i;
 
 	if (fd == -1)
 		return (-1);
-	i = -1;
+	i = 0;
 	buf = (char *)malloc(BUFFER_SIZE * sizeof(char));
-	while ((ret = read(fd, &buf[++i], 1)))
+	ret = read(fd, buf, BUFFER_SIZE - 1);
+	buf[BUFFER_SIZE] = '\0';
+	printf("[buf=%s]", buf);		
+	while (buf[i] != '\n' && buf[i])
+		i++;
+	if (buf[i] == '\n')
 	{
-	//	printf("[buf(%d)=%c]", i, buf[i]);		
-		if (buf[i] == '\n')
-		{
-			buf[i + 1] = '\0';
-			//printf("%s", buf);
-			*line = buf;
-			free(buf);
-			return (1);
-		}
+		*line = ft_strdup(
 	}
+	line[j] = '\0';
+	printf("line=%s", line);
 	return (0);
 }
 
@@ -110,7 +110,7 @@ int		main(int argc, char **argv)
 	if (argc == 1)
 		fd = open("teste.txt", O_RDONLY);
 	else
-		fd = 0;
+		fd = 1;
 	if (fd == -1)
 		return (-1);
 	while (get_next_line(fd, &str))
