@@ -49,3 +49,22 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	*(str + i) = '\0';
 	return (str);
 }
+
+char	*ft_strjoin(const char *str1, const char *str2)
+{
+	char	*str;
+	size_t	len;
+	size_t	i;
+
+	i = 0;
+	len = ft_strlen(str1);
+	len += ft_strlen(str2);
+	if (!(str = (char *)malloc(sizeof(char) * (len + 1))))
+		return (NULL);
+	while (*str1)
+		*str++ = *str1++;
+	while (*str2)
+		*str++ = *str2++;
+	*str = '\0';
+	return (&(*(str - len)));
+}

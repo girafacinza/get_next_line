@@ -14,97 +14,82 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-
-/*
-void	ft_get_numbers(char *buf)
+int		newline(const char *str)
 {
-	int		size;
-	int		j;
-	int		k;
-	int		i;
+	int i;
 
-	size = size_dict(buf);
-	j = 0;
 	i = 0;
-	while (buf[i] != '\0')
+	printf("[str=%s]", str);
+	while (str[i])
 	{
-		k = 0;
-		while (buf[i] != ' ' && buf[i] != ':')
-		{
-			g_numbs[j].nbr[k] = buf[i];
-			i++;
-			k++;
-		}
-		g_numbs[j].nbr[k] = '\0';
-		g_numbs[j].digits = k;
-		while (buf[i] == ' ' || buf[i] == ':')
-			i++;
-		k = 0;
-		while (buf[i] != '\n' && *(buf + 1) != '\0')
-		{
-			g_numbs[j].text[k] = buf[i];
-			i++;
-			k++;
-		}
-		g_numbs[j].text[k] = '\0';
-		j++;
+		if (str[i] == '\n')
+			return (i);
 		i++;
 	}
-	j = 0;
+	return (-1);
 }
 
-int		ft_read_file(char *name)
+
+char		*refreshheap(char *heap, char *buff)
 {
-	int		fd;
-	int		ret;
-	char	buf[BUF_SIZE];
+	char *temp;
 
-	fd = open(name, O_RDONLY);
-	if (fd == -1)
+	if (!heap)
 	{
-		ft_putstr("Cannot open file.\n");
-		return (0);
+		heap = ft_strdup(buff);
+		return (heap);
 	}
-	ret = read(fd, buf, BUF_SIZE);
-	buf[ret] = '\0';
-	if (close(fd) == -1)
-	{
-		ft_putstr("Cannot close file.\n");
-		return (0);
-	}
-	ft_get_numbers(buf);
-	return (1);
+	temp = ft_strjoin(heap, buff);
+	free(heap);
+	heap = ft_strdup(temp);
+	return (heap);
 }
-*/
+
 int		get_next_line(int fd, char **line)
 {
-	static char	*buf;
+	static char	*heap;
 	static int	ret;
-	char		*temp;
+	char		buff[BUFFER_SIZE + 1];
 	int		i;
 
-	if (fd == -1)
-		return (-1);
-	i = 0;
-	buf = (char *)malloc(BUFFER_SIZE * sizeof(char));
-	ret = read(fd, buf, BUFFER_SIZE - 1);
-	buf[BUFFER_SIZE] = '\0';
-	printf("[buf=%s]", buf);		
-	while (buf[i] != '\n' && buf[i])
-		i++;
-	if (buf[i] == '\n')
+	if (heap && (i = newline(heap) >= 0))
 	{
-		*line = ft_strdup(
+		*line = ft_substr(heap, 0, i);
+		heap = ft_strdup(&heap[i + 1]); //leak de memoria
+		printf("[buff][line:%s][heap:%s]\n", *line, heap);
+		return (1);
 	}
-	line[j] = '\0';
-	printf("line=%s", line);
-	return (0);
+	ret = read(fd, buff, BUFFER_SIZE);
+	buff[ret] = '\0';
+	printf("[buff=%s]", buff);
+	i = -1;
+	while (buff[++i])
+	{
+		if (buff[i] == '\n')
+		{
+			heap = refreshheap(heap, ft_substr(buff, 0, i));
+			*line = ft_strdup(heap);
+			free(heap);
+			heap = ft_strdup(&buff[i + 1]);
+			printf("[line:%s][heap:%s]\n", *line, heap);
+			return (1);
+		}
+		if (buff[i + 1] == '\0')
+		{
+			heap = refreshheap(heap, ft_substr(buff, 0, i + 1));
+			return (1);
+		}
+	}
+	*line = ft_strdup(heap);
+	free(heap);
+	return (0);	
 }
 
 int		main(int argc, char **argv)
 {
 	int	fd;
 	char	*str;
+	int	i = 1;
 
 	(void)argv;
 	if (argc == 1)
@@ -114,7 +99,10 @@ int		main(int argc, char **argv)
 	if (fd == -1)
 		return (-1);
 	while (get_next_line(fd, &str))
-		printf("%s", str);
+	{
+		printf("l%d: %s\n", i++, str);
+	}
+	printf("%s\n", str);
 	if (close(fd) == -1)
 		return (-1);
 	return (0);
