@@ -6,7 +6,7 @@
 /*   By: lambrozi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/12 19:30:15 by lambrozi          #+#    #+#             */
-/*   Updated: 2020/03/03 21:13:38 by lambrozi         ###   ########.fr       */
+/*   Updated: 2020/03/03 21:51:17 by lambrozi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,7 @@ int		newline(const char *str)
 	while (str[i])
 	{
 		if (str[i] == '\n')
-		{
-			printf("[i:%d]", i);
 			return (i);
-		}
 		i++;
 	}
 	return (-1);
@@ -57,34 +54,31 @@ int		get_next_line(int fd, char **line)
 	int		i;
 
 	i = newline(heap);
-	if (heap && i >= 0)
+	if (heap && i >= 0) //tem \n no heap
 	{
-		printf("[n posit:%d]", i);
-		*line = ft_substr(heap, 0, i + 1);
+//		printf("[n posit:%d]", i);
+		*line = ft_substr(heap, 0, i);
 		heap = ft_strdup(&heap[i + 1]); //leak de memoria
-		printf("[buff][line:%s][heap:%s]\n", *line, heap);
+//		printf("[buff][line:%s][heap:%s]\n", *line, heap);
 		return (1);
 	}
 	ret = read(fd, buff, BUFFER_SIZE);
 	buff[ret] = '\0';
-	printf("[buff=%s]", buff);
-	i = -1;
-	while (buff[++i])
+//	printf("[buff=%s][heap=%s]", buff, heap);
+	i = newline(buff);
+	if (i >= 0) //tem \n no buff
 	{
-		if (buff[i] == '\n')
-		{
-			heap = refreshheap(heap, ft_substr(buff, 0, i));
-			*line = ft_strdup(heap);
-			free(heap);
-			heap = ft_strdup(&buff[i + 1]);
-			printf("[line:%s][heap:%s]\n", *line, heap);
-			return (1);
-		}
-		if (buff[i + 1] == '\0')
-		{
-			heap = refreshheap(heap, ft_substr(buff, 0, i + 1));
-			return (1);
-		}
+		heap = refreshheap(heap, ft_substr(buff, 0, i));
+		*line = ft_strdup(heap);
+		free(heap);
+		heap = ft_strdup(&buff[i + 1]);
+//		printf("[line:%s][heap:%s]\n", *line, heap);
+		return (1);
+	}
+	if (ret && i == -1) //fd nao acabou e buff nao tem \n
+	{
+		heap = refreshheap(heap, buff);
+		return (get_next_line(fd, line));
 	}
 	*line = ft_strdup(heap);
 	free(heap);
@@ -95,7 +89,7 @@ int		main(int argc, char **argv)
 {
 	int	fd;
 	char	*str;
-	int	i = 1;
+//	int	i = 1;
 
 	(void)argv;
 	if (argc == 1)
@@ -106,9 +100,9 @@ int		main(int argc, char **argv)
 		return (-1);
 	while (get_next_line(fd, &str))
 	{
-		printf("l%d:[[%s]]\n\n", i++, str);
+//		printf("l%d:[[%s]]\n\n", i++, str);
+		printf("%s\n", str);
 	}
-	printf("%s\n", str);
 	if (close(fd) == -1)
 		return (-1);
 	return (0);
