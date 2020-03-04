@@ -6,7 +6,7 @@
 /*   By: lambrozi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/12 19:30:15 by lambrozi          #+#    #+#             */
-/*   Updated: 2020/02/12 20:03:04 by lambrozi         ###   ########.fr       */
+/*   Updated: 2020/03/03 21:13:38 by lambrozi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,15 @@ int		newline(const char *str)
 	int i;
 
 	i = 0;
-	printf("[str=%s]", str);
+	if (!str)
+		return (-1);
 	while (str[i])
 	{
 		if (str[i] == '\n')
+		{
+			printf("[i:%d]", i);
 			return (i);
+		}
 		i++;
 	}
 	return (-1);
@@ -52,9 +56,11 @@ int		get_next_line(int fd, char **line)
 	char		buff[BUFFER_SIZE + 1];
 	int		i;
 
-	if (heap && (i = newline(heap) >= 0))
+	i = newline(heap);
+	if (heap && i >= 0)
 	{
-		*line = ft_substr(heap, 0, i);
+		printf("[n posit:%d]", i);
+		*line = ft_substr(heap, 0, i + 1);
 		heap = ft_strdup(&heap[i + 1]); //leak de memoria
 		printf("[buff][line:%s][heap:%s]\n", *line, heap);
 		return (1);
@@ -100,7 +106,7 @@ int		main(int argc, char **argv)
 		return (-1);
 	while (get_next_line(fd, &str))
 	{
-		printf("l%d: %s\n", i++, str);
+		printf("l%d:[[%s]]\n\n", i++, str);
 	}
 	printf("%s\n", str);
 	if (close(fd) == -1)
