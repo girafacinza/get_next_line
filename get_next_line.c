@@ -6,7 +6,7 @@
 /*   By: lambrozi <lambrozi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/12 19:30:15 by lambrozi          #+#    #+#             */
-/*   Updated: 2020/03/09 19:16:13 by lambrozi         ###   ########.fr       */
+/*   Updated: 2020/03/10 21:58:13 by lambrozi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-int		newline(const char *str)
+int		newline(const char *str, int ret)
 {
 	int i;
 
@@ -27,6 +27,8 @@ int		newline(const char *str)
 			return (i);
 		i++;
 	}
+	if (ret == 0) //ver isso daqui
+		return (i);
 	return (-1);
 }
 
@@ -35,7 +37,7 @@ int		get_next_line(int fd, char **line)
 	static char	*heap;
 	static int	ret;
 	char		*buff;
-	int			i;
+	int		i;
 
 	if (fd < 0 || fd == 1 || fd == 2)
 		return (-1);
@@ -43,13 +45,12 @@ int		get_next_line(int fd, char **line)
 		return (-1);
 	ret = read(fd, buff, BUFFER_SIZE);
 	buff[ret] = '\0';
-	heap = ft_strjoin(&heap, &buff);
-	i = newline(heap);
-	printf(".");
+	heap = ft_strjoin(heap, buff);
+	i = newline(heap, ret);
 	if (heap && i >= 0) //tem \n no heap
 	{
 		*line = ft_substr(heap, 0, i);
-		heap = ft_strdup(&(heap)+ i + 1);
+		heap = ft_strdup(heap, i + 1); //leak de memoria
 		if (ret == 0 && *heap == '\0')
 		{
 			free(heap);
@@ -59,8 +60,7 @@ int		get_next_line(int fd, char **line)
 	}
 	if (ret != 0) //fd nao acabou e buff nao tem \n
 		return (get_next_line(fd, line));
-	if (heap)
-		*line = ft_strdup(&heap);
+	*line = ft_strdup(heap, 0);
 	return (0);	
 }
 
@@ -68,11 +68,11 @@ int		main(int argc, char **argv)
 {
 	int	fd;
 	char	*str;
-	int	i = 0;
+	int	i = 1;
 
 	(void)argv;
 	if (argc == 1)
-		fd = open("teste.txt", O_RDONLY);
+		fd = open("empty_lines", O_RDONLY);
 	else
 		fd = 1;
 	if (fd == -1)
