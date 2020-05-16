@@ -21,6 +21,13 @@ static void		ft_strfree(char **str)
 	*str = 0;
 }
 
+/*
+ * Allocate *line and copies to that everything in *resto until i_break
+ * Copies everything after i_break into a new string temp
+ * Deallocate the oldest resto
+ * Copies to &resto the new string temp
+ * Returns (-1) if error, (0) if EOF and (1) if not EOF
+*/
 static int		ft_strcut(char **resto, char **line, int i_break)
 {
 	char	*temp;
@@ -50,6 +57,9 @@ static int		ft_strcut(char **resto, char **line, int i_break)
 	return (0);
 }
 
+/*
+ * Returns the position of a '\n' (or of the '\0' if there are no more to read in the file)
+*/
 static int		ft_new_line(const char *str, int ret)
 {
 	int i;
@@ -68,6 +78,11 @@ static int		ft_new_line(const char *str, int ret)
 	return (-1);
 }
 
+/*
+ * Allocates a new string concat for concatenation of resto and temp
+ * Deallocates the oldest resto
+ * Returns the string concat
+*/
 static char		*ft_strconcat(char *str1, char *str2)
 {
 	int		len;
