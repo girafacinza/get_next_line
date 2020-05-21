@@ -98,7 +98,7 @@ static char		*ft_strconcat(char *str1, char *str2)
 int				get_next_line(int fd, char **line)
 {
 	char		temp[BUFFER_SIZE + 1];
-	static int	ret;
+	int			ret;
 	static char	*resto[OPEN_MAX];
 	int			i;
 
