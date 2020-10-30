@@ -1,10 +1,10 @@
-#STACK MEMORY
+# STACK MEMORY
 - the stack grows and shrinks as functions push and pop local variables
 - there is no need to manage the memory yourself, variables are allocated and freed automatically
 - the stack has size limits
 - stack variables only exist while the function that created them, is running
 
-#HEAP MEMORY
+# HEAP MEMORY
 - variables can be accessed globally
 - no limit on memory size
 - (relatively) slower access
