@@ -1,4 +1,4 @@
-# [get_next_line](/en.subject.pdf)
+# [get_next_line](/others/en.subject.pdf)
 
 The objective of this project is to code a function that reads one or multiple files and returns line by line, ending with a newline.
 
