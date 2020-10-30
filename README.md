@@ -2,7 +2,7 @@
 
 The objective of this project is to code a function that reads one or multiple files and returns line by line, ending with a newline.
 
-Here, I also implemented a main to test the project. It's possible with it, test with one or two files, besides the standard input.
+Here, I also implemented a main to test the project. It's possible to test with one or two files, besides the standard input.
 
 ## Instalation and Usage
 
