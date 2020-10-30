@@ -7,8 +7,8 @@ Here, I also implemented a main to test the project. It's possible to test with 
 ## Instalation and Usage
 
 ```
-git clone https://glllcs/get_net_line
-cd get_next_line/tests
+git clone https://github.com/glllcs/get_next_line.git && \
+cd get_next_line/tests && \
 gcc -Wall -Wextra -Werror -D BUFFER_SIZE=1 ../srcs/get_next_line.c ../srcs/get_next_line_utils.c main.c
 ```
 
