@@ -25,4 +25,4 @@ To read two files:
 ./a.out test1.txt test2.txt
 ```
 
-![gnl_universe](/others/gnl.png)
+![gnl_universe](../assets/gnl.png?raw=true)
